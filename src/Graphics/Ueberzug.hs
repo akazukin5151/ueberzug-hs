@@ -16,17 +16,22 @@ import GHC.IO.Handle (hPutStr, Handle, hFlush)
 import Control.Exception (tryJust, IOException)
 import System.IO.Error (isFullError, isPermissionError)
 
+-- | The main struct storing a handle to the ueberzug process
 newtype Ueberzug = Ueberzug {process :: Maybe Handle}
 
+-- | Create a new Ueberzug instance with an empty process handle
 newUeberzug :: Ueberzug
 newUeberzug = Ueberzug { process = Nothing }
 
+-- | Draw an image using the @ub@ instance with config @config@
 draw :: Ueberzug -> UbConf -> IO (Either String Ueberzug)
 draw ub config =
   case toJson config of
     Right cmd -> run ub cmd
     Left  xx  -> pure (Left xx)
 
+-- | Clear an image with identifier @identifier_@. The @ub@ instance
+-- | should be the same one that @draw@ returned, when drawing that image.
 clear :: Ueberzug -> String -> IO (Either String Ueberzug)
 clear ub identifier_ = do
   case toJson config of
@@ -42,6 +47,7 @@ hExceptions e =
     ex | isPermissionError ex -> Just "Permission Error"
     _                         -> Nothing
 
+-- | Pipe the command @cmd@ to the process in @ub@
 run :: Ueberzug -> String -> IO (Either String Ueberzug)
 run ub cmd = do
   stdin <- stdin_h
@@ -67,8 +73,10 @@ run ub cmd = do
         Nothing -> fromJust <$> created_stdin_h
         Just a -> pure a
 
+-- | The available actions on the ueberzug image
 data Actions = Add | Remove
 
+-- | The available scalers to scale the image
 data Scalers = Crop
              | Distort
              | FitContain
@@ -84,6 +92,7 @@ instance Show Scalers where
   show ForcedCover = "forced_cover"
   show Cover       = "cover"
 
+-- | The ueberzug configuration record. Contains all the data needed to draw the image
 data UbConf =
   UbConf
     { action             :: Actions
@@ -100,6 +109,7 @@ data UbConf =
     , scaling_position_y :: Maybe Float
     }
 
+-- | Default config with approx. "mempty" values for convenience
 defaultUbConf :: UbConf
 defaultUbConf =
   UbConf
@@ -117,6 +127,8 @@ defaultUbConf =
     , scaling_position_y = Nothing
     }
 
+-- | Converts the ueberzug config to JSON, so that it can be passed into
+-- | the ueberzug process
 toJson :: UbConf -> Either String String
 toJson conf = do
   iden <-

@@ -2,13 +2,13 @@ name:                ueberzug-hs
 version:             0.1.0.0
 synopsis:            Haskell bindings to ueberzug to display images in the terminal
 -- description:
-homepage:            https://github.com/githubuser/ueberzug-hs#readme
+homepage:            https://github.com/akazukin5151/ueberzug-hs#readme
 license:             MIT
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2022 Author name here
-category:            Web
+author:              Tsui Yik Ching
+maintainer:          tsuiyikching@protonmail.com
+copyright:           2022 Tsui Yik Ching
+category:            Graphics
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
@@ -35,7 +35,7 @@ library
 
 source-repository head
   type:     git
-  location: https://github.com/githubuser/ueberzug-hs
+  location: https://github.com/akazukin5151/ueberzug-hs
 
 test-suite tests
   type:             exitcode-stdio-1.0

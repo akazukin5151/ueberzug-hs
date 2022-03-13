@@ -7,7 +7,6 @@ module Graphics.Ueberzug
     , Scalers (..)
     , UbConf (..)
     , defaultUbConf
-    , toJson
     ) where
 
 import System.Process (createProcess, proc, CreateProcess (std_in, std_out), StdStream (CreatePipe))

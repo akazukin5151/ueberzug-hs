@@ -30,7 +30,7 @@ draw ub config =
     Left  xx  -> pure (Left xx)
 
 -- | Clear an image with identifier @identifier_@. The @ub@ instance
--- | should be the same one that @draw@ returned, when drawing that image.
+-- should be the same one that @draw@ returned, when drawing that image.
 clear :: Ueberzug -> String -> IO (Either String Ueberzug)
 clear ub identifier_ = do
   case toJson config of

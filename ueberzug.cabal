@@ -1,4 +1,4 @@
-name:                ueberzug-hs
+name:                ueberzug
 version:             0.1.0.0
 synopsis:            Haskell bindings to ueberzug to display images in the terminal
 -- description:
@@ -41,6 +41,6 @@ test-suite tests
   type:             exitcode-stdio-1.0
   hs-source-dirs:   test
   main-is:          Main.hs
-  build-depends:    base, ueberzug-hs
+  build-depends:    base, ueberzug
   ghc-options:      -fno-ignore-asserts
   default-language: Haskell2010

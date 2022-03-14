@@ -39,7 +39,7 @@ category:            Graphics
 build-type:          Simple
 extra-source-files:  README.md
 extra-doc-files:     CHANGELOG.md
-cabal-version:       >=1.10
+cabal-version:       1.18
 
 library
   hs-source-dirs:      src

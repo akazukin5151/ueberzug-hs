@@ -1,6 +1,6 @@
 name:                ueberzug
 version:             0.1.0.0
-synopsis:            Haskell bindings to ueberzug to display images in the terminal
+synopsis:            Haskell bindings for ueberzug to display images in the terminal
 -- description:
 homepage:            https://github.com/akazukin5151/ueberzug-hs#readme
 license:             MIT

@@ -1,6 +1,6 @@
 # ueberzug-hs
 
-Haskell bindings to ueberzug to display images in the terminal
+Haskell bindings for ueberzug to display images in the terminal
 
 Make sure ueberzug is installed in the system path.
 

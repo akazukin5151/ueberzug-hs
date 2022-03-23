@@ -10,28 +10,32 @@ module Graphics.Ueberzug
     ) where
 
 import System.Process (createProcess, proc, CreateProcess (std_in, std_out), StdStream (CreatePipe))
-import Data.Maybe (fromJust)
 import GHC.IO.Handle (hPutStr, Handle, hFlush)
 import Control.Exception (tryJust, IOException)
 import System.IO.Error (isFullError, isPermissionError)
 
 -- | The main struct storing a handle to the ueberzug process
-newtype Ueberzug = Ueberzug {process :: Maybe Handle}
+newtype Ueberzug = Ueberzug {process :: Handle}
 
--- | Create a new Ueberzug instance with an empty process handle
-newUeberzug :: Ueberzug
-newUeberzug = Ueberzug { process = Nothing }
+-- | Create a new ueberzug process
+newUeberzug :: IO Ueberzug
+newUeberzug = do
+  (Just stdin_h, _, _, _) <-
+    createProcess (proc "ueberzug" ["layer", "--silent"])
+      { std_in = CreatePipe
+      , std_out = CreatePipe
+      }
+  pure $ Ueberzug { process = stdin_h }
 
 -- | Draw an image using the @ub@ instance with config @config@
-draw :: Ueberzug -> UbConf -> IO (Either String Ueberzug)
+draw :: Ueberzug -> UbConf -> IO (Either String ())
 draw ub config =
   case toJson config of
     Right cmd -> run ub cmd
     Left  xx  -> pure (Left xx)
 
--- | Clear an image with identifier @identifier_@. The @ub@ instance
--- should be the same one that @draw@ returned, when drawing that image.
-clear :: Ueberzug -> String -> IO (Either String Ueberzug)
+-- | Clear an image with identifier @identifier_@.
+clear :: Ueberzug -> String -> IO (Either String ())
 clear ub identifier_ = do
   case toJson config of
     Right cmd -> run ub cmd
@@ -46,10 +50,10 @@ hExceptions e =
     ex | isPermissionError ex -> Just "Permission Error"
     _                         -> Nothing
 
--- | Pipe the command @cmd@ to the process in @ub@
-run :: Ueberzug -> String -> IO (Either String Ueberzug)
+-- | Pipe the command @cmd@ to the process stored in @ub@
+run :: Ueberzug -> String -> IO (Either String ())
 run ub cmd = do
-  stdin <- stdin_h
+  let stdin = process ub
   a <- tryJust hExceptions (hPutStr stdin cmd)
   case a of
     Left e -> pure $ Left e
@@ -57,20 +61,7 @@ run ub cmd = do
       b <- tryJust hExceptions (hFlush stdin)
       case b of
         Left e -> pure $ Left e
-        _ -> pure $ Right $ Ueberzug { process = Just stdin }
-
-  where
-    fst4 (a, _, _, _) = a
-    created_stdin_h =
-      fst4 <$>
-        createProcess (proc "ueberzug" ["layer", "--silent"])
-          { std_in = CreatePipe
-          , std_out = CreatePipe
-          }
-    stdin_h =
-      case process ub of
-        Nothing -> fromJust <$> created_stdin_h
-        Just a -> pure a
+        _ -> pure $ Right ()
 
 -- | The available actions on the ueberzug image
 data Actions = Add | Remove

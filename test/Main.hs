@@ -11,8 +11,8 @@ import Graphics.Ueberzug
       Scalers(FitContain),
       UbConf(identifier, path, x, y, width, height, scaler) )
 
-forceRight :: Either a b -> b
-forceRight (Right x) = x
+guard True _    = pure ()
+guard False msg = error msg
 
 forceLeft :: Either a b -> a
 forceLeft (Left x) = x
@@ -20,13 +20,14 @@ forceLeft (Left x) = x
 main :: IO ()
 main = do
   testDrawThenClear
+  testTwoImagesAndClear
   testEmptyPathFails
   testEmptyIdenFails
 
 testDrawThenClear :: IO ()
 testDrawThenClear = do
-  let ub = newUeberzug
-  e_ub <-
+  ub <- newUeberzug
+  ei <-
     draw ub $ defaultUbConf
       { identifier = "75933779_p0"
       -- relative to repo root
@@ -37,16 +38,49 @@ testDrawThenClear = do
       , height = Just 10
       , scaler = Just FitContain
       }
-  let ub = assert (isRight e_ub) $ forceRight e_ub
+  guard (isRight ei) "ei is Left but expected Right"
   threadDelay 1000000
 
-  e_ub <- clear ub "75933779_p0"
-  let ub = assert (isRight e_ub) $ forceRight e_ub
+  clear ub "75933779_p0"
+  threadDelay 1000000
+
+testTwoImagesAndClear :: IO ()
+testTwoImagesAndClear = do
+  ub <- newUeberzug
+  ei1 <-
+    draw ub $ defaultUbConf
+      { identifier = "75933779_p0_0"
+      , path = "test/75933779_p0.jpg"
+      , x = 10
+      , y = 2
+      , width = Just 10
+      , height = Just 10
+      , scaler = Just FitContain
+      }
+  guard (isRight ei1) "ei1 is Left but expected Right"
+  threadDelay 1000000
+
+  ei2 <-
+    draw ub $ defaultUbConf
+      { identifier = "75933779_p0_1"
+      , path = "test/75933779_p0.jpg"
+      , x = 20
+      , y = 2
+      , width = Just 10
+      , height = Just 10
+      , scaler = Just FitContain
+      }
+  guard (isRight ei2) "ei2 is Left but expected Right"
+  threadDelay 1000000
+
+  clear ub "75933779_p0_0"
+  threadDelay 1000000
+  clear ub "75933779_p0_1"
   threadDelay 1000000
 
 testEmptyPathFails :: IO ()
 testEmptyPathFails = do
-  let ub = newUeberzug
+  ub <- newUeberzug
   e_ub <-
     draw ub $ defaultUbConf
       { identifier = "75933779_p0"
@@ -58,7 +92,7 @@ testEmptyPathFails = do
 
 testEmptyIdenFails :: IO ()
 testEmptyIdenFails = do
-  let ub = newUeberzug
+  ub <- newUeberzug
   e_ub <-
     draw ub $ defaultUbConf
       { identifier = ""

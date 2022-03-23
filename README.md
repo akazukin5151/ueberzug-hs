@@ -1,5 +1,9 @@
 # ueberzug-hs
 
+[![Hackage](https://img.shields.io/badge/Hackage-blueviolet?logo=haskell)](https://hackage.haskell.org/package/ueberzug)
+
+[![Documentation](https://img.shields.io/static/v1?label=Documentation&message=Available&color=success)](https://hackage.haskell.org/package/ueberzug/docs/Graphics-Ueberzug.html)
+
 Haskell bindings for ueberzug to display images in the terminal
 
 Make sure ueberzug is installed in the system path.
